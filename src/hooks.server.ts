@@ -1,7 +1,11 @@
 import type { State } from '$lib/types';
+import path from 'path';
+import { MEDIA_PATH } from '$env/static/private';
 import { port } from '$lib/env';
 import { Server } from 'socket.io';
 import { readdirSync } from 'fs';
+
+console.log(MEDIA_PATH);
 
 let state: State;
 
@@ -43,9 +47,9 @@ try {
 
 export async function handle({ event, resolve }) {
     if (event.url.pathname.startsWith('/get-media')) {
-        let files = readdirSync('./static/media');
+        let files = readdirSync(path.join(MEDIA_PATH, 'scoreboard-media'));
 
-        files.shift();
+        files = files.filter((item) => !/^\._/.test(item));
 
         files = files.map((file) => {
             const [artist, song] = file.split('.')[0].split('-');
