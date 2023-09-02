@@ -21,6 +21,8 @@ export interface Play {
 }
 
 export interface Player {
+    first?: string;
+    last?: string;
     name: string;
     number: number;
     photo?: string;

@@ -93,101 +93,149 @@ export const home: Teams = {
     ],
     middleSchool: [
         {
-            name: 'Shema gift',
-            number: 63,
+          first: "Jack",
+          last: "Wescott",
+          name: "Jack Wescott",
+          number: 2
         },
         {
-            name: 'Kindi Dinizio',
-            number: 20,
+          first: "Shane",
+          last: "Welsch",
+          name: "Shane Welsch",
+          number: 3
         },
         {
-            name: 'Harley Raymond',
-            number: 60,
+          first: "Beckett",
+          last: "griffin",
+          name: "Beckett griffin",
+          number: 5
         },
         {
-            name: 'Oscar LeClerc',
-            number: 22,
+          first: "Colby",
+          last: "Hodgkins",
+          name: "Colby Hodgkins",
+          number: 12
         },
         {
-            name: 'Blake Garland',
-            number: 55,
+          first: "Tyler",
+          last: "Axelsen",
+          name: "Tyler Axelsen",
+          number: 14
         },
         {
-            name: 'Ryan Neault',
-            number: 15,
+          first: "Andre",
+          last: "Hicks",
+          name: "Andre Hicks",
+          number: 15
         },
         {
-            name: 'Lucas Roberson',
-            number: 34,
+          first: "Ryan",
+          last: "Neault",
+          name: "Ryan Neault",
+          number: 16
         },
         {
-            name: 'Cole Tanner',
-            number: 9,
+          first: "Wyatt",
+          last: "Poitras",
+          name: "Wyatt Poitras",
+          number: 19
         },
         {
-            name: 'Hunter Hall',
-            number: 2,
+          first: "Owen",
+          last: "Lawrence",
+          name: "Owen Lawrence",
+          number: 20
         },
         {
-            name: 'Peter Wescott',
-            number: 1,
+          first: "Forest",
+          last: "Peare",
+          name: "Forest Peare",
+          number: 22
         },
         {
-            name: 'Jacob Sprague',
-            number: 16,
+          first: "Cassidy",
+          last: "Flynn",
+          name: "Cassidy Flynn",
+          number: 24
         },
         {
-            name: 'Adrian Anderson',
-            number: 69,
+          first: "Jovon",
+          last: "Rith",
+          name: "Jovon Rith",
+          number: 25
         },
         {
-            name: 'Tyler Axelsen',
-            number: 12,
+          first: "Jackson",
+          last: "Hull",
+          name: "Jackson Hull",
+          number: 29
         },
         {
-            name: 'Cassidy Flynn',
-            number: 24,
+          first: "Joseph",
+          last: "Alward",
+          name: "Joseph Alward",
+          number: 32
         },
         {
-            name: 'Davonte Hill',
-            number: 62,
+          first: "Tyler",
+          last: "Him",
+          name: "Tyler Him",
+          number: 33
         },
         {
-            name: 'Aiden Stisi',
-            number: 52,
+          first: "SIMON",
+          last: "MERRILL",
+          name: "SIMON MERRILL",
+          number: 34
         },
         {
-            name: 'Brady Griffin',
-            number: 47,
+          first: "Lucas",
+          last: "Roberson",
+          name: "Lucas Roberson",
+          number: 37
         },
         {
-            name: 'Julian Alward',
-            number: 18,
+          first: "Davonte",
+          last: "Hill",
+          name: "Davonte Hill",
+          number: 47
         },
         {
-            name: 'Carter Briere',
-            number: 56,
+          first: "Blake",
+          last: "Garland",
+          name: "Blake Garland",
+          number: 55
         },
         {
-            name: 'Allen Cabana',
-            number: 37,
+          first: "Bryson",
+          last: "Porter",
+          name: "Bryson Porter",
+          number: 56
         },
         {
-            name: 'Camillo Jones',
-            number: 8,
+          first: "Jeremiah",
+          last: "Boothby",
+          name: "Jeremiah Boothby",
+          number: 59
         },
         {
-            name: 'Jose Bonilla',
-            number: 10,
+          first: "Alex",
+          last: "Rodriguez",
+          name: "Alex Rodriguez",
+          number: 63
         },
         {
-            name: 'Beckett griffin',
-            number: 5,
+          first: "Nash",
+          last: "Leavitt",
+          name: "Nash Leavitt",
+          number: 66
         },
         {
-            name: 'Jeremiah Boothby',
-            number: 83,
-        },
+          first: "Mohammad",
+          last: "Habeeb",
+          name: "Mohammad Habeeb",
+          number: null
+        }
     ],
     peewee: [
         {
