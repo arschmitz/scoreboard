@@ -137,6 +137,7 @@
 
     .posession {
         font-size: 15vh;
+        font-family: 'Noto Color Emoji', sans-serif;
     }
 
     .quarter {
@@ -440,7 +441,7 @@
             <video
                 class:playing={playing}
                 autoplay
-                src={`media/${video}`}
+                src={`/media/${video}`}
                 bind:this={videoElement}
                 on:ended={() => video = null}
                 on:play={() => playing = true}>

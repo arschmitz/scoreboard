@@ -12,5 +12,6 @@ export const STATE: State = {
     quarter: 1,
     hTol: 3,
     gTol: 3,
+    smoke: false,
     team: 'mites',
 }

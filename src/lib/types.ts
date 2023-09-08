@@ -10,6 +10,7 @@ export interface State {
     hTol: number;
     gTol: number;
     guestName: string;
+    smoke: boolean;
     team: 'mites' | 'peewee' | 'middleSchool';
 }
 
@@ -21,8 +22,6 @@ export interface Play {
 }
 
 export interface Player {
-    first?: string;
-    last?: string;
     name: string;
     number: number;
     photo?: string;

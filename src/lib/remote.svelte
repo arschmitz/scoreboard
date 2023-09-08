@@ -196,10 +196,16 @@
             clock.parseDisplayTime(_state.displayTime);
         });
 
-        const data = await fetch('/get-media');
-        media = await data.json();
+        try {
+            const data = await fetch('/media/list');
 
-
+            if (data.ok) {
+                media = await data.json();
+            }
+            
+        } catch {
+            console.error('media');
+        }
     })
   </script>
   
@@ -514,7 +520,7 @@
         {#if state.posession === 'guest'}
             <button on:click={() => createPlay('touchdown', 'guest')}>Touchdown</button>
             <button on:click={() => createPlay('conversion', 'guest')}>2 Point Conversion</button>
-            
+            ssh-add ~/.ssh/id_ed25519
             <div class="offense-plays">
                 <button on:click={() => createPlay('block', 'guest')}>Block</button>
                 <button on:click={() => createPlay('run', 'guest')}>Run</button>
@@ -548,6 +554,9 @@
         <option value='peewee'>Pee Wee</option>
         <option value='middleSchool'>Middle School</option>
     </select>
+
+    <button on:click={() => state.smoke = true}>Smoke On</button>
+    <button on:click={() => state.smoke = false}>Smoke Off</button>
 
     <button on:click={() => state = STATE}>Start New Game</button>
 </Dialog>
