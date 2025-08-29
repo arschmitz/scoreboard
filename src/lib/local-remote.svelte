@@ -10,6 +10,8 @@
     import { onMount } from 'svelte';
     import { STATE, TIME } from '$lib/constants';
 
+    export let connectDialog = false;
+
     let time: Time = JSON.parse(JSON.stringify(TIME));;
     let motivation: string;
     let playerPicker: boolean;
@@ -219,7 +221,7 @@
         } catch {
             console.error('media');
         }
-    })
+    });
   </script>
   
   <style>
@@ -622,7 +624,7 @@
 
         <label for="backgroundColor">Background Color
         <input bind:this={backgroundColorPicker} type="color" id="backgroundColor" on:change={updateBackgroundColor}/></label>
-        <div><h2>Scan to connect remote</h2><img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=http://{state.ip}:4173"/></div>
+        <div><h2>Scan to connect remote</h2></div>
         <div>
             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3o11m032vjqdrOzpmOHtou?utm_source=generator&theme=0" width="49%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/6DlZrCJxIbHbtHMkdZ1cMG?utm_source=generator&theme=0" width="49%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
@@ -640,5 +642,11 @@
         <li><button class="player" on:click={() => closePicker(null)}>Unknown</button></li>
     </ul>
     <button on:click={() => { playerPicker = false; playerResolver(null); } }>Cancel</button>
+</Dialog>
+
+<Dialog bind:open={connectDialog}>
+    <h1>Connect Remote</h1>
+    <p>Scan the QR code to connect your phone or tablet as a remote</p>
+    <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=http://{state.ip}:4173/remote"/>
 </Dialog>
   

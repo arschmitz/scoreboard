@@ -1,8 +1,8 @@
 <script lang="ts">
-    import type { State, Play } from '$lib/types';
+    import type { State, Play, Time } from '$lib/types';
     import io from 'socket.io-client';
     import { port } from '$lib/env';
-    import { STATE } from '$lib/constants';
+    import { STATE, TIME } from '$lib/constants';
     import { onMount, tick } from 'svelte';
 
     let showPass = false;
@@ -13,8 +13,11 @@
     let showGif;
     let showFumble;
     let showInterception;
+    let color = "#fff";
+    let backgroundColor = "rgb(3, 3, 40)";
     let videoElement: HTMLVideoElement;
-    let state = JSON.parse(JSON.stringify(STATE));
+    let state: State = JSON.parse(JSON.stringify(STATE));
+    let time: Time = JSON.parse(JSON.stringify(TIME));
   
     onMount(() => {
         const socket = io(`${window.location.hostname}:${port}`);
@@ -22,6 +25,11 @@
         socket.on('sync', (_state: State) => {
             state = _state
         });
+
+        socket.on('time', (_time) => {
+            console.log('time')
+            time = _time;
+        })
 
         socket.on('play', (play: Play) => {
             console.log('plau')
@@ -64,13 +72,14 @@
             videoElement.play();
             playing = true;
         });
+
+        socket.on('color', (_color) => color = _color);
+        socket.on('backgroundColor', (_backgroundColor) => backgroundColor = _backgroundColor);
     });
 </script>
   
 <style>
     .scoreboard {
-        background-color: rgb(2, 2, 50);
-        color: #fff;
         padding: 3vh;
         width: 100vw;
         height: calc((100vw / 16) * 9);
@@ -82,11 +91,13 @@
         text-align: center;
         display: flex;
         justify-content: space-between;
-
+        width: 90%;
+        margin-left: 5%;
     }
 
     .home, .guest {
-        min-width: 25%;
+        width: 30%;
+        position: relative;
     }
 
     .center {
@@ -94,13 +105,15 @@
     }
 
     .clock {
-        margin-top: 15vh;
-        font-size: 28vh;
+        margin-top: -10vh;
+        text-align: center;
+        font-size: 60vh;
         font-weight: 900;
         transition: all;
         transition-duration: 1s;
-
-        border: 1vh solid #fff;
+        left: 50%;
+        position: relative;
+        transform: translateX(-50%);
         border-radius: 5vh;
     }
 
@@ -111,8 +124,9 @@
     }
 
     .score {
-        font-size: 33vh;
+        font-size: 22vh;
         font-weight: 900;
+        display: inline-block;
     }
 
     .footer {
@@ -126,7 +140,7 @@
         font-weight: 900;
         text-transform: uppercase;
         position: absolute;
-        bottom: 0;
+        bottom: 0.5em;
     }
 
     .hTol, .gTol {
@@ -135,15 +149,28 @@
         min-width: 25%;
     }
 
+    .invisible {
+        visibility:hidden;
+    }
+
     .posession {
         font-size: 15vh;
         font-family: 'Noto Color Emoji', sans-serif;
+        margin-left: -37%;
+        display: inline-block;
+    }
+
+    .guest .posession {
+        margin-left: 0;
+        margin-right: -1.3em;
     }
 
     .quarter {
         font-size: 11vh;
         font-weight: 900;
         text-transform: uppercase;
+        margin-top: 1.2em;
+        white-space: nowrap;
     }
 
     .pass {
@@ -206,11 +233,13 @@
     .mini .clock {
         font-size: 7rem;
         margin-top: 0rem;
+        width: 40%;
+
     }
 
     .play-clock .clock {
-        font-size: 12rem;
-        margin-top: 0rem;
+        font-size: 30rem;
+        margin-top: 50rem;
     }
 
     .play-clock .quarter {
@@ -248,13 +277,10 @@
 
     .player-number {
         font-size: 15rem;
-        font-family: 'Alfa Slab One', cursive;
+        font-weight: 900;
     }
 
-
-
     .player {
-        font-family: Arial, Helvetica, sans-serif;
         font-size: 10rem;
         font-weight: 900;
         text-transform: uppercase;
@@ -337,6 +363,7 @@
       12px 12px 0 var(--color-quinary);
   }
   70% {
+
     text-shadow: 3px 3px 0 var(--color-secondary),
       6px 6px 0 var(--color-tertiary), 9px 9px var(--color-quaternary);
   }
@@ -351,6 +378,7 @@
     text-shadow: none;
   }
 }
+
 
 @keyframes move {
   0% {
@@ -375,22 +403,23 @@
 }
 
 .action {
+    position: absolute;
+    left: 50%;
     display: flex;
     align-items: center;
     justify-items: center;
-    margin-top: 5rem;
+    transform: translateX(-50%);
 }
 </style>
   
-<div class="scoreboard" class:mini={video}>
+<div class="scoreboard" class:mini={video} style="color: {color}; background-color: {backgroundColor}" class:play-clock={currentPlay}>
     <div class="board-container">
         <div class="home">
             <div class="team-name">Westbrook</div>
+            <div class="posession" class:invisible={state.posession === "guest"}>🏈</div>
             <div class="score">{state.home}</div>
-            <div class="posession">{#if state.posession === 'home'}🏈{/if}</div>
         </div>
-        <div class="center" class:play-clock={currentPlay}>
-            <div class="clock">{state.displayTime}</div>
+        <div class="center">
             <div class="quarter">Quarter {state.quarter}</div>
             {#if currentPlay}
                 <div class="action">
@@ -412,12 +441,14 @@
         <div class="guest">
             <div class="team-name">{state.guestName}</div>
             <div class="score">{state.guest}</div>
-            <div class="posession">{#if state.posession === 'guest'}🏈{/if}</div>
+            <div class="posession" class:invisible={state.posession === "home"}>🏈</div>
         </div>
     </div>
+
+    <div class="clock">{time.display}</div>
     <div class="footer">
         <div class="hTol">Time outs: {state.hTol}</div>
-        <div>{state.down} & {state.toGo} on the {state.ballOn}</div>
+        <div style="visibility: hidden;">{state.down} & {state.toGo} on the {state.ballOn}</div>
         <div class="gTol">Time outs: {state.gTol}</div>
     </div>
     <div class="pass" class:animate-pass={showPass}>

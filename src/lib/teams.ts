@@ -1,94 +1,118 @@
 import type { Teams } from "./types";
 
 export const home: Teams = {
-    mites: [
+    peewee: [
         {
             name: 'Deaglan Schmitz',
-            number: 15,
+            number: 99,
         },
         {
             name: 'Nathan Mclaskey',
-            number: 7,
+            number: 10,
         },
         {
             name: 'Benjamin Wesner',
-            number: 73,
-        },
-        {
-            name: 'Bradley Patrick',
-            number: 8,
+            number: 94,
         },
         {
             name: 'Calvin Morgan',
-            number: 9,
+            number: 11,
         },
         {
             name: 'Carson Harvey',
-            number: 87,
-        },
-        {
-            name: 'Charles Mugissho',
-            number: 3,
-        },
-        {
-            name: 'David Natale',
-            number: 33,
-        },
-        {
-            name: 'Gerard Bergeron',
-            number: 24,
+            number: 79,
         },
         {
             name: 'Ian Hernandez',
-            number: 16,
+            number: 32,
         },
         {
             name: 'Jacob Mitchel',
-            number: 18,
-        },
-        {
-            name: 'Jacob Rice',
-            number: 19,
+            number: 8,
         },
         {
             name: 'Jacob Burns',
-            number: 30,
+            number: 45,
         },
         {
             name: 'Kai Reid',
             number: 4,
         },
         {
-            name: 'Lillie Pierson',
-            number: 29,
-        },
-        {
             name: 'Mason Mowatt',
-            number: 83,
-        },
-        {
-            name: 'Maxwell Marston',
-            number: 28,
-        },
-        {
-            name: 'Mustafa Altameemi',
-            number: 1,
-        },
-        {
-            name: 'River Raymond',
-            number: 34,
+            number: 76,
         },
         {
             name: 'Ryder Ingram',
-            number: 14,
-        },
-        {
-            name: 'Sean Leahy',
-            number: 12,
+            number: 2,
         },
         {
             name: 'Tanner Lawrence',
             number: 77,
+        },
+        {
+            name: 'Kahmal Dutra',
+            number: 3,
+        },
+        {
+            name: 'Jeancarlo Melgar Chinchilla',
+            number: 9,
+        },
+        {
+            name: 'Ahmed Babiker',
+            number: 15,
+        },
+        {
+            name: 'David Velozo',
+            number: 22,
+        },
+        {
+            name: 'chase Fraser',
+            number: 33,
+        },
+        {
+            name: 'Pierce Gould',
+            number: 36,
+        },
+        {
+            name: 'Zander Regoja',
+            number: 38,
+        },
+        {
+            name: 'Jaxon Stisi',
+            number: 39,
+        },
+        {
+            name: 'Charles Mugissho',
+            number: 43,
+        },
+        {
+            name: 'Jordan Burns',
+            number: 45,
+        },
+        {
+            name: 'Logan Samara',
+            number: 48,
+        },
+        {
+            name: 'Canen Greenwood',
+            number: 52,
+        },
+        {
+            name: 'Carter Greenwood',
+            number: 54,
+        },
+        {
+            name: 'Jadyn Cary-Blodgett',
+            number: 56,
+        },
+        {
+            name: 'Jordan Chayarath',
+            number: 63,
+        },
+        {
+            name: 'Jayliana Dixon',
+            number: 64,
         },
     ],
     middleSchool: [
@@ -189,7 +213,7 @@ export const home: Teams = {
             number: 83,
         },
     ],
-    peewee: [
+    mites: [
         {
             name: 'Gabriel ganza',
             number: 5,

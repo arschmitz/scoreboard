@@ -1,5 +1,4 @@
 export interface State {
-    displayTime: string;
     posession: 'guest' | 'home';
     ballOn: number;
     down: string;
@@ -12,6 +11,14 @@ export interface State {
     guestName: string;
     smoke: boolean;
     team: 'mites' | 'peewee' | 'middleSchool';
+    ip: string;
+}
+
+export interface Time {
+    display: string;
+    minutes: string;
+    running: boolean;
+    seconds: string;
 }
 
 export interface Play {

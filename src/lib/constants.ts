@@ -1,7 +1,6 @@
-import type { State } from "$lib/types";
+import type { State, Time } from "$lib/types";
 
 export const STATE: State = {
-    displayTime: '8:00',
     posession: 'guest',
     guestName: 'Guest',
     home: 0,
@@ -14,4 +13,12 @@ export const STATE: State = {
     gTol: 3,
     smoke: false,
     team: 'mites',
+    ip: null,
+}
+
+export const TIME: Time = {
+    minutes: '08',
+    seconds: '00',
+    display: '08:00',
+    running: false
 }

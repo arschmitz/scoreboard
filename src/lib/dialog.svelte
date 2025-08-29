@@ -10,6 +10,8 @@
         width: 100%;
         bottom: 0;
         transition: all 0.5s;
+        padding-bottom: 4rem;
+        display:none;
     }
 
     .dialog-content {
@@ -22,16 +24,18 @@
         position: absolute;
         left: 0;
         bottom: 0;
+        padding-bottom: 4rem;
     }
 
     .open {
         left: 0;
+        display: block;
     }
 
     .close-button {
-        position: absolute;
+        position: fixed;
         bottom: 0;
-        width: 100%;
+        width: 90%;
         left: 0;
         background: navy;
         color: white;
