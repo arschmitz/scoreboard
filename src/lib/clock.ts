@@ -29,7 +29,6 @@ export function bindClock(socket) {
     });
     socket.on('stop', stop);
     socket.on('set_minutes',(_minutes) => {
-        console.log(_minutes)
         minutes = parseInt(_minutes, 10);
         updateTime();
         parseTime();
@@ -55,14 +54,12 @@ function updateTime() {
 }
 
 function parseTime() {
-    console.log(time, minutes, seconds)
     // does the same job as parseInt truncates the float
     minutes = ((time / 1000) / 60) | 0;
     seconds = ((time / 1000) % 60) | 0;
     state.minutes = minutes < 10 ? "0" + minutes : `${minutes}`;
     state.seconds = seconds < 10 ? "0" + seconds : `${seconds}`;
     state.display = `${state.minutes}:${state.seconds}`;
-    console.log(state);
     io.emit('time', state);
 }
 

@@ -12,6 +12,8 @@ export interface State {
     smoke: boolean;
     team: 'mites' | 'peewee' | 'middleSchool';
     ip: string;
+    trackDowns: boolean;
+    trackFieldPosition: boolean;
 }
 
 export interface Time {

@@ -53,7 +53,6 @@
   }
 
   function parseTime(..._: unknown[]) {
-    console.log(time, minutes, seconds)
     // does the same job as parseInt truncates the float
     minutes = ((time / 1000) / 60) | 0;
     seconds = ((time / 1000) % 60) | 0;

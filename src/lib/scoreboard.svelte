@@ -448,7 +448,7 @@
     <div class="clock">{time.display}</div>
     <div class="footer">
         <div class="hTol">Time outs: {state.hTol}</div>
-        <div style="visibility: hidden;">{state.down} & {state.toGo} on the {state.ballOn}</div>
+        <div>{#if state.trackDowns}{state.down} {#if state.trackFieldPosition}& {state.toGo} on the {state.ballOn}{/if}{/if}</div>
         <div class="gTol">Time outs: {state.gTol}</div>
     </div>
     <div class="pass" class:animate-pass={showPass}>

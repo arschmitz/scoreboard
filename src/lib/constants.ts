@@ -14,6 +14,8 @@ export const STATE: State = {
     smoke: false,
     team: 'mites',
     ip: null,
+    trackFieldPosition: true,
+    trackDowns: true
 }
 
 export const TIME: Time = {

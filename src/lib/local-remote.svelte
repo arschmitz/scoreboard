@@ -11,6 +11,7 @@
     import { STATE, TIME } from '$lib/constants';
 
     export let connectDialog = false;
+    export let local = false;
 
     let time: Time = JSON.parse(JSON.stringify(TIME));;
     let motivation: string;
@@ -23,6 +24,8 @@
     let menuOpen = false;
     let enteringGuestPlay = false;
     let enteringHomePlay = false;
+    let mediaOpen = false;
+    let settingsOpen = false;
 
     const teams: Record<'home' | 'guest', Teams> = Object.freeze({
         home,
@@ -58,6 +61,8 @@
     function closePicker(_player: Player) {
         playerPicker = false;
         playerResolver(_player);
+        enteringHomePlay = false;
+        enteringGuestPlay = false;
     }
 
     async function createPlay(type: string, _team: 'home' | 'guest') {
@@ -271,7 +276,7 @@
         flex-direction: column;
         font-weight: 900;
         padding: 1rem;
-
+        min-height: 100vh;
     }
 
     .down, .team {
@@ -287,9 +292,7 @@
     }
 
     .plays {
-        flex-direction: row;
-        align-items: flex-start;
-        justify-content: space-between;
+        min-width: 100%;
     }
 
     h3 {
@@ -350,7 +353,7 @@
 
     .timer-button {
         width: 47%;
-        font-size: 6vw;
+        font-size: 1.5rem;
         padding: 1rem;
     }
 
@@ -363,13 +366,16 @@
     }
 
     .display-clock input{
-        font-size: 25vw;
-        width: 40vw;
+        font-size: 100px;
+        width:45%;
     }
 
     .display-clock {
-        font-size: 10vw;
+        font-size: 60px;
         color: white;
+        display: flex;
+        justify-content: space-around;
+        align-items: center;
     }
 
     .minutes {
@@ -390,7 +396,7 @@
 
     .score {
         text-align: center;
-        font-size: 8vw;
+        font-size: 2rem;
         width: 100%;
     }
 
@@ -414,6 +420,8 @@
         position: absolute;
         right: 0.5rem;
         font-size: 3rem;
+        z-index: 9999;
+        top: 0;
     }
 
     .button-row {
@@ -433,55 +441,91 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        height: 3rem;
+        margin: 0.5rem 0;
     }
     .tol input {
         width: 1em;
         margin-left: 0.5rem;
     }
+    .menu-wrap button {
+        width: 100%;
+        padding: 0.5rem;
+    }
+    .invisible {
+        display: none;
+    }
+    .team {
+        height: 300px;
+    }
+    .tol button, .down button {
+        font-size: 1rem;
+    }
+    .to-go input {
+        width: 50px;
+    }
+    .clock-controls {
+        display: flex;
+
+        & button {
+            flex-grow: 1;
+        }
+    }
+    .team {
+        margin: 0.5rem;
+    }
+    .guest {
+        margin: 0 0 0 0.25rem;
+    }
+    .home {
+        margin: 0 0.25rem 0 0;
+    }
+    .plays {
+        padding: 0;
+        margin: 0.5rem;
+    }
   </style>
   <main>
     <button class="menu" on:click={() => menuOpen = true }>☰</button>
-    <div class="right">
-        <div class="clock">
-            <div class="display-clock">
-                <input
-                    on:click={selectValue}
-                    on:change={() => { socket.emit('set_minutes', time.minutes) }}
-                    name="time-minutes"
-                    class="minutes"
-                    disabled={time.running}
-                    inputmode="numeric"
-                    bind:value={time.minutes}
-                />
-                :    
-                <input
-                    on:change={() => { socket.emit('set_seconds', time.seconds) }}
-                    on:click={selectValue}
-                    name="time-seconds"
-                    class="seconds"
-                    disabled={time.running}
-                    inputmode="numeric"
-                    bind:value={time.seconds}
-                />
-            </div>
-            <div class="clock">{time.display}</div>
-            <div>
-                <button
-                    class="timer-button start"
-                    on:click={() => { socket.emit('start') }}
-                >
-                    Start Clock
-                </button>
-                <button
-                    class="timer-button stop"
-                    on:click={() => { socket.emit('stop') }}
-                >
-                    Stop Clock
-                </button>
-            </div>
+    <div class="clock">
+        <div class="display-clock">
+            <input
+                on:click={selectValue}
+                on:change={() => { socket.emit('set_minutes', time.minutes) }}
+                name="time-minutes"
+                class="minutes"
+                disabled={time.running}
+                inputmode="numeric"
+                bind:value={time.minutes}
+            />
+            :    
+            <input
+                on:change={() => { socket.emit('set_seconds', time.seconds) }}
+                on:click={selectValue}
+                name="time-seconds"
+                class="seconds"
+                disabled={time.running}
+                inputmode="numeric"
+                bind:value={time.seconds}
+            />
         </div>
+        <div class="clock">{time.display}</div>
+        <div class="clock-controls">
+            <button
+                class="timer-button start"
+                on:click={() => { socket.emit('start') }}
+            >
+                Start
+            </button>
+            <button
+                class="timer-button stop"
+                on:click={() => { socket.emit('stop') }}
+            >
+                Stop
+            </button>
+        </div>
+    </div>
         
+    {#if state.trackDowns}
         <div class="down" >
             <h3>Down</h3>
             <div>
@@ -490,25 +534,41 @@
                 <button class:active={state.down === '3rd'} on:click={() => state.down = '3rd'}>3rd</button>
                 <button class:active={state.down === '4th'} on:click={() => state.down = '4th'}>4th</button>
             </div>
-            <div class="to-go">
-                <label for="to-go">To Go: </label>
-                <input on:click={selectValue} id="to-go" name="to-go" type="number" bind:value={state.toGo}/>
-                <label for="to-go">Ball on: </label>
-                <input on:click={selectValue} id="ball-on" name="ball-on" type="number" bind:value={state.ballOn}/>
+            {#if state.trackFieldPosition}
+                <div class="to-go">
+                    <label for="to-go">To Go: </label>
+                    <input on:click={selectValue} id="to-go" name="to-go" type="number" bind:value={state.toGo}/>
+                    <label for="ball-on">Ball on: </label>
+                    <input on:click={selectValue} id="ball-on" name="ball-on" type="number" bind:value={state.ballOn}/>
+                </div>
+            {/if}
+            <h3>Quarter</h3>
+            <div>
+                <button class:active={state.quarter === 1} on:click={() => state.quarter = 1}>1st</button>
+                <button class:active={state.quarter === 2} on:click={() => state.quarter = 2}>2nd</button>
+                <button class:active={state.quarter === 3} on:click={() => state.quarter = 3}>3rd</button>
+                <button class:active={state.quarter === 4} on:click={() => state.quarter = 4}>4th</button>
             </div>
         </div>
-    </div>
+    {/if}
     
     <div class="plays">
         <div class="home team">
             <h2>Westbrook</h2>
             <input on:click={selectValue} class="score" type="tel" value={state.home} on:change={({target}) => state.home = target.value}>
             
-            <button on:click={() => state.posession = "home"}>Take Ball</button>
+            <div style="min-height: 5rem">
+                <button on:click={() => state.posession = "home"}><div class="posession" class:invisible={state.posession === "guest"}>🏈</div>Take Ball</button>
+
+            </div>
             
             <div class="tol">
-                <label for="hTol">Timeouts</label>
-                <input id="hTol" type="tel" max="3" min="0" bind:value={state.hTol}>
+                <div>
+                    <h3>Timeouts</h3>
+                    <button class:active={state.hTol === 1} on:click={() => state.hTol = 1}>1</button>
+                    <button class:active={state.hTol === 2} on:click={() => state.hTol = 2}>2</button>
+                    <button class:active={state.hTol === 3} on:click={() => state.hTol = 3}>3</button>
+                </div>
             </div>
             <button on:click={() => enteringHomePlay = true}>Enter Play</button>
         </div>
@@ -516,31 +576,20 @@
             <h2><input bind:value={state.guestName} /></h2>
             <input on:click={selectValue} class="score" type="tel" value={state.guest} on:change={({target}) => state.guest = target.value}>
             
-            <button on:click={() => state.posession = "guest"}>Take Ball</button>
+            <div style="min-height: 5rem">
+                <button on:click={() => state.posession = "guest"}><div class="posession" class:invisible={state.posession === "home"}>🏈</div>Take Ball</button>
+            </div>
             
             <div class="tol">
-                <label for="gTol">Timeouts</label>
-                <input id="gTol" type="tel" max="3" min="0" bind:value={state.gTol}>
+                <div>
+                    <h3>Timeouts</h3>
+                    <button class:active={state.gTol === 1} on:click={() => state.gTol = 1}>1</button>
+                    <button class:active={state.gTol === 2} on:click={() => state.gTol = 2}>2</button>
+                    <button class:active={state.gTol === 3} on:click={() => state.gTol = 3}>3</button>
+                </div>
             </div>
-
-            <button on:click={() => enteringGuestPlay = true}>Enter Play</button>
         </div>
     </div>
-
-    Motivational Video
-    <br>
-    <select bind:value={motivation}>
-        {#each media as video}
-            <option value={video.file}>{video.artist} - {video.song}</option>
-        {:else}
-            <option>Loading...</option>
-        {/each}
-    </select>
-    <div class="button-row">
-        <button on:click={() => socket.emit('video', motivation)}>Play</button>
-        <button on:click={() => socket.emit('video', null)}>Stop</button>
-    </div>
-    
   </main>
   <div>
 </div>
@@ -595,42 +644,80 @@
     </div>
 </Dialog>
 
-<Dialog bind:open={menuOpen}>
-    <div class="menu-wrap">
-        <label for="quarter">Quarter
-        <select id="quarter" bind:value={state.quarter}>
-            {#each [1, 2, 3, 4] as quarter}
-                <option value={quarter} selected={state.quarter === quarter}>{quarter}</option>
-            {/each}
-        </select></label>
-        <label for="select-team">Select Team
+<Dialog bind:open={settingsOpen}>
+    <label for="select-team">Select Team
         <select id="team-select" bind:value={state.team}>
             <option value='mites'>Mites</option>
             <option value='peewee'>Pee Wee</option>
             <option value='middleSchool'>Middle School</option>
-        </select></label>
+        </select>
+    </label>
 
+    <div>
+        <h3>Track Downs</h3>
+        <select id="down-mode" bind:value={state.trackDowns}>
+            <option value={true}>Yes</option>
+            <option value={false}>No</option>
+        </select>
+    </div>
+
+    {#if state.trackDowns}
         <div>
+            <h3>Track Field Position</h3>
+            <select id="field-position" bind:value={state.trackFieldPosition}>
+                <option value={true}>Yes</option>
+                <option value={false}>No</option>
+            </select>
+        </div>
+    {/if}
+
+    <label for="color">Text Color
+    <input bind:this={colorPicker} type="color" id="color" on:change={updateColor}/></label>
+
+    <label for="backgroundColor">Background Color
+    <input bind:this={backgroundColorPicker} type="color" id="backgroundColor" on:change={updateBackgroundColor}/></label>
+</Dialog>
+
+<Dialog bind:open={menuOpen}>
+    <div class="menu-wrap">
+    
+        
+        <!--<div>
             <button on:click={() => state.smoke = true}>Smoke On</button>
             <button on:click={() => state.smoke = false}>Smoke Off</button>
         </div>
         <div>
             <button on:click={() => socket.emit('air_cannon', true)}>Air Cannon</button>
             <button on:click={() => socket.emit('rocket', true)}>Launch Rocket</button>
-        </div>
+        </div>-->
 
-        <label for="color">Text Color
-        <input bind:this={colorPicker} type="color" id="color" on:change={updateColor}/></label>
+        
+        <button on:click={() => {mediaOpen = true; menuOpen=false;}}>🎶 Play Media</button>
+        <button on:click={() => {settingsOpen = true; menuOpen = false}}>⚙️ Settings</button>
+        <button on:click={() => newGame()}>🆕 Start New Game</button>
+    </div>
+</Dialog>
 
-        <label for="backgroundColor">Background Color
-        <input bind:this={backgroundColorPicker} type="color" id="backgroundColor" on:change={updateBackgroundColor}/></label>
-        <div><h2>Scan to connect remote</h2></div>
-        <div>
-            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3o11m032vjqdrOzpmOHtou?utm_source=generator&theme=0" width="49%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-            <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/6DlZrCJxIbHbtHMkdZ1cMG?utm_source=generator&theme=0" width="49%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-             <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6Bv7z3SjGOdSNwSQ1njMGk?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
-        </div>
-        <button on:click={() => newGame()}>Start New Game</button>
+<Dialog bind:open={mediaOpen}>
+    <h2>Spotify (Must be signed in to spotify.com)</h2>
+    <div>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/3o11m032vjqdrOzpmOHtou?utm_source=generator&theme=0" width="49%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+        <iframe style="border-radius:12px" src="https://open.spotify.com/embed/track/6DlZrCJxIbHbtHMkdZ1cMG?utm_source=generator&theme=0" width="49%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+         <iframe style="border-radius:12px" src="https://open.spotify.com/embed/playlist/6Bv7z3SjGOdSNwSQ1njMGk?utm_source=generator&theme=0" width="100%" height="152" frameBorder="0" allowfullscreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+    </div>
+
+    Motivational Video
+    <br>
+    <select bind:value={motivation}>
+        {#each media as video}
+            <option value={video.file}>{video.artist} - {video.song}</option>
+        {:else}
+            <option>Loading...</option>
+        {/each}
+    </select>
+    <div class="button-row">
+        <button on:click={() => socket.emit('video', motivation)}>Play</button>
+        <button on:click={() => socket.emit('video', null)}>Stop</button>
     </div>
 </Dialog>
 
