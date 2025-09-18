@@ -117,99 +117,87 @@ export const home: Teams = {
     ],
     middleSchool: [
         {
-            name: 'Shema gift',
-            number: 63,
-        },
-        {
-            name: 'Kindi Dinizio',
-            number: 20,
-        },
-        {
-            name: 'Harley Raymond',
-            number: 60,
-        },
-        {
-            name: 'Oscar LeClerc',
-            number: 22,
-        },
-        {
-            name: 'Blake Garland',
-            number: 55,
-        },
-        {
-            name: 'Ryan Neault',
-            number: 15,
-        },
-        {
-            name: 'Lucas Roberson',
-            number: 34,
-        },
-        {
-            name: 'Cole Tanner',
-            number: 9,
-        },
-        {
-            name: 'Hunter Hall',
-            number: 2,
-        },
-        {
-            name: 'Peter Wescott',
+            name: 'Giovanni Fiumara',
             number: 1,
         },
         {
-            name: 'Jacob Sprague',
-            number: 16,
-        },
-        {
-            name: 'Adrian Anderson',
-            number: 69,
-        },
-        {
-            name: 'Tyler Axelsen',
-            number: 12,
-        },
-        {
-            name: 'Cassidy Flynn',
-            number: 24,
-        },
-        {
-            name: 'Davonte Hill',
-            number: 62,
-        },
-        {
-            name: 'Aiden Stisi',
-            number: 52,
-        },
-        {
-            name: 'Brady Griffin',
-            number: 47,
-        },
-        {
-            name: 'Julian Alward',
-            number: 18,
-        },
-        {
-            name: 'Carter Briere',
-            number: 56,
-        },
-        {
-            name: 'Allen Cabana',
-            number: 37,
-        },
-        {
-            name: 'Camillo Jones',
-            number: 8,
-        },
-        {
-            name: 'Jose Bonilla',
-            number: 10,
-        },
-        {
-            name: 'Beckett griffin',
+            name: 'Calvin Morgan',
             number: 5,
         },
         {
-            name: 'Jeremiah Boothby',
+            name: 'Jordan Burns',
+            number: 7,
+        },
+        {
+            name: 'Anthony Merrill',
+            number: 8,
+        },
+        {
+            name: 'Jeancarlo Melgar Chinchilla',
+            number: 9,
+        },
+        {
+            name: 'Nathan Mclaskey',
+            number: 10,
+        },
+        {
+            name: 'Raymond Ortiz',
+            number: 12,
+        },
+        {
+            name: 'Jordan Mitchell',
+            number: 14,
+        },
+        {
+            name: 'Hunter Milici',
+            number: 15,
+        },
+        {
+            name: 'Aurelius Maciejewski',
+            number: 19,
+        },
+        {
+            name: 'Carter Anderson',
+            number: 25,
+        },
+        {
+            name: 'Deaglan Schmitz',
+            number: 60,
+        },
+        {
+            name: 'Carter Greenwood',
+            number: 34,
+        },
+        {
+            name: 'Kayden Kiley',
+            number: 47,
+        },
+        {
+            name: 'Carson Harvey',
+            number: 55,
+        },
+        {
+            name: 'Trevor Malmstrom',
+            number: 56,
+        },
+        {
+            name: 'Timothy Wildes',
+            number: 60,
+        },
+        {
+            name: 'Canen Greenwood',
+            number: 66,
+        },
+        {
+            name: 'Jovanni Geisinger',
+            number: 75,
+        },
+        {
+            name: 'Akeem AlAnizi',
+            number: 77 ,
+        },
+        {
+            name: 'Silas Bridge',
             number: 83,
         },
     ],

@@ -1,5 +1,5 @@
 <script lang="ts">
-    import Remote from '$lib/local-remote.svelte';
+    import Remote from '$lib/remote.svelte';
 </script>
 
-<Remote connectDialog/>
+<Remote connectDialog local/>
