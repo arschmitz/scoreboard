@@ -1,0 +1,240 @@
+[
+  {
+    "teamName": "Westbrook Jr. Blazes",
+    "playLevel": "Middle School",
+    "roster": [
+      {
+        "name": "Giovanni Fiumara",
+        "number": "1"
+      },
+      {
+        "name": "Calvin Morgan",
+        "number": "5"
+      },
+      {
+        "name": "Jordan Burns",
+        "number": "7"
+      },
+      {
+        "name": "Anthony Merrill",
+        "number": "8"
+      },
+      {
+        "name": "Jeancarlo Melgar Chinchilla",
+        "number": "9"
+      },
+      {
+        "name": "Nathan Mclaskey",
+        "number": "10"
+      },
+      {
+        "name": "Raymond Ortiz",
+        "number": "12"
+      },
+      {
+        "name": "Jordan Mitchell",
+        "number": "14"
+      },
+      {
+        "name": "Hunter Milici",
+        "number": "15"
+      },
+      {
+        "name": "Aurelius Maciejewski",
+        "number": "19"
+      },
+      {
+        "name": "Carter Anderson",
+        "number": "25"
+      },
+      {
+        "name": "Deaglan Schmitz",
+        "number": "60"
+      },
+      {
+        "name": "Carter Greenwood",
+        "number": "34"
+      },
+      {
+        "name": "Kayden Kiley",
+        "number": "47"
+      },
+      {
+        "name": "Carson Harvey",
+        "number": "55"
+      },
+      {
+        "name": "Trevor Malmstrom",
+        "number": "56"
+      },
+      {
+        "name": "Timothy Wildes",
+        "number": "60"
+      },
+      {
+        "name": "Canen Greenwood",
+        "number": "66"
+      },
+      {
+        "name": "Jovanni Geisinger",
+        "number": "75"
+      },
+      {
+        "name": "Akeem AlAnizi",
+        "number": "77"
+      },
+      {
+        "name": "Silas Bridge",
+        "number": "83"
+      }
+    ]
+  },
+  {
+    "teamName": "Westbrook Jr Blazes",
+    "playLevel": "PeeWee",
+    "roster": [
+      {
+        "name": "Jacob Mitchell",
+        "number": "1"
+      },
+      {
+        "name": "Logan Samara",
+        "number": "8"
+      },
+      {
+        "name": "Elias Walsh",
+        "number": "14"
+      },
+      {
+        "name": "Ian Hernandez",
+        "number": "19"
+      },
+      {
+        "name": "Jaxon Hollis",
+        "number": "19"
+      },
+      {
+        "name": "Chase Fraser",
+        "number": "23"
+      },
+      {
+        "name": "Kurbel Kahasay",
+        "number": "24"
+      },
+      {
+        "name": "Kai Reid",
+        "number": "28"
+      },
+      {
+        "name": "Ahmed Babiker",
+        "number": "31"
+      },
+      {
+        "name": "Jayilana Dixon",
+        "number": "35"
+      },
+      {
+        "name": "Jaxon Stisi",
+        "number": "40"
+      },
+      {
+        "name": "Cameron Duhamel",
+        "number": "42"
+      },
+      {
+        "name": "Jadyn Cary-Blodgett",
+        "number": "45"
+      },
+      {
+        "name": "Salah Mahmoud",
+        "number": "51"
+      },
+      {
+        "name": "Charles Mugissho",
+        "number": "53"
+      },
+      {
+        "name": "Zander Regoja",
+        "number": "60"
+      },
+      {
+        "name": "Josiah Oriol",
+        "number": "65"
+      },
+      {
+        "name": "Ezekiel Campbell",
+        "number": "67"
+      },
+      {
+        "name": "Mason Mowatt",
+        "number": "71"
+      },
+      {
+        "name": "Tanner Lawrence",
+        "number": "74"
+      },
+      {
+        "name": "Wenderly Allison",
+        "number": null
+      }
+    ]
+  },
+  {
+    "teamName": "Westbrook Jr Blazes",
+    "playLevel": "Mite",
+    "roster": [
+      {
+        "name": "Muhiddin Muhiddin",
+        "number": "4"
+      },
+      {
+        "name": "Messiah Rith",
+        "number": "12"
+      },
+      {
+        "name": "Jayce Tucker",
+        "number": "15"
+      },
+      {
+        "name": "Ali Abdullah",
+        "number": "18"
+      },
+      {
+        "name": "Jameson Pelletier",
+        "number": "20"
+      },
+      {
+        "name": "Addison Marcorqudale",
+        "number": "21"
+      },
+      {
+        "name": "Landen Derrig",
+        "number": "31"
+      },
+      {
+        "name": "Bentley Hubbard",
+        "number": "32"
+      },
+      {
+        "name": "Matyas Mitchell",
+        "number": "59"
+      },
+      {
+        "name": "Dominic McKeil",
+        "number": "60"
+      },
+      {
+        "name": "Marco Hernandez",
+        "number": "72"
+      },
+      {
+        "name": "Ifeoluwa Fashina",
+        "number": null
+      },
+      {
+        "name": "Levi Miller",
+        "number": null
+      }
+    ]
+  }
+]

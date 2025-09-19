@@ -1,14 +1,18 @@
 <script lang="ts">
-    import type { Media, Play, Player, State, Time, Teams } from '$lib/types';
+    import type { Media, Play, Player, State, Time, Team, Teams } from '$lib/types';
     import type { Socket } from 'socket.io';
     import type { DefaultEventsMap } from 'socket.io/dist/typed-events';
+    import type { ButtonListItem } from '$lib/buttonList.svelte';
     import Dialog from '$lib/dialog.svelte';
     import io from 'socket.io-client';
     import { home } from '$lib/teams';
     import { guest } from '$lib/away';
     import { port } from '$lib/env';
     import { onMount } from 'svelte';
+    import TeamList from '$lib/teams.json';
     import { STATE, TIME } from '$lib/constants';
+    import ButtonList from '$lib/buttonList.svelte';
+    import { writable } from 'svelte/store';
 
     export let connectDialog = false;
     export let local = false;
@@ -26,17 +30,24 @@
     let enteringHomePlay = false;
     let mediaOpen = false;
     let settingsOpen = false;
+    let updateRosterDialog = false;
+    let playerDialog = false;
+    let updatePlayer = false;
 
     const teams: Record<'home' | 'guest', Teams> = Object.freeze({
         home,
         guest,
     });
 
+    console.log(TeamList)
+
     let socket: Socket<DefaultEventsMap>;
 
     let state: State = JSON.parse(JSON.stringify(STATE));
 
     $: update(state);
+    $: updateTeams(TeamList);
+    $: updatePlayers(editingTeam);
 
     function update(..._: unknown[]) {
         if (!socket) {
@@ -65,126 +76,83 @@
         enteringGuestPlay = false;
     }
 
-    async function createPlay(type: string, _team: 'home' | 'guest') {
+    let editingTeam: Team;
+    let playerButtons: ButtonListItem[];
+    let editingPlayer: Team["roster"][0];
+    let teamButtons: ButtonListItem[];
+
+    function updateTeams(TeamList) {
+        console.log("update team list ")
+        teamButtons = TeamList.map((team) => {
+            return {
+                data: team,
+                click: () => {
+                    updateRosterDialog = false;
+                    playerDialog = true;
+                    editingTeam = team;
+                }
+            } as ButtonListItem
+        });
+    }
+
+    function updatePlayers(editingTeam) {
+        playerButtons = editingTeam?.roster.map((player) => {
+            return {
+                data: player,
+                click: (event) => {
+                    if (event.target.nodeName === "INPUT") {
+                        return;
+                    }
+
+                    updatePlayer = true;
+                    editingPlayer = player;
+                }
+            } as ButtonListItem
+        });
+    }
+
+    async function createPlay(type: string, _team: 'home' | 'away') {
         const team = _team === 'home' ? 'Westbrook' : state.guestName
-        let player;
-        currentTeam = teams[_team][state.team].sort(function(a: Player, b: Player) {
+        currentTeam = state[`${_team}Team`]?.roster.sort(function(a: Player, b: Player) {
             if (a.number < b.number) return -1;
             if (a.number > b.number) return 1;
             return 0;
         });
 
+        const player = currentTeam ? await openPicker() : null;
+
+        console.log({ player });
+
         switch(type) {
             case 'touchdown': 
-                player = await openPicker();
                 state[_team === 'home' ? 'home' : 'guest'] += 6;
-
-                play = {
-                    ...player,
-                    type: 'touchdown',
-                    team
-                }
-
                 break;
             case 'conversion': 
-                player = await openPicker();
                 state[_team === 'home' ? 'home' : 'guest'] += 2;
                 state.posession = _team !== 'home' ? 'home' : 'guest';
-                play = {
-                    ...player,
-                    type: '2 point conversion',
-                    team 
-                }
 
                 break;
-            case 'safety': 
-                player = await openPicker();
-                state[_team !== 'home' ? 'home' : 'guest'] += 2;
-
-                play = {
-                    ...player,
-                    type: 'safety',
-                    team 
-                }
-
-                break;
-            case 'fumble':
-                player = await openPicker();
-                play = {
-                    ...player,
-                    type: 'fumble recovery',
-                    team 
-                }
-
-                break;
-            case 'block':
-                player = await openPicker();
-                play = {
-                    ...player,
-                    type: 'block',
-                    team 
-                }
-
-                break;
-            case 'run':
-                player = await openPicker();
-                play = {
-                    ...player,
-                    type: 'run',
-                    team 
-                }
-
-                break;
-            case 'catch':
-                player = await openPicker();
-                play = {
-                    ...player,
-                    type: 'catch',
-                    team 
-                }
-
-                break;
-            case 'pass':
-                player = await openPicker();
-                play = {
-                    ...player,
-                    type: 'pass',
-                    team 
-                }
-
+            case 'safety':
+                state[_team === 'home' ? 'home' : 'guest'] += 2;
                 break;
             case 'interception':
-                player = await openPicker();
                 state.posession = team === 'home' ? 'home' : 'guest';
-                play = {
-                    ...player,
-                    type: 'interception',
-                    team 
-                }
-
                 break;
-            case 'tackle':
-                player = await openPicker();
-                play = {
-                    ...player,
-                    type: 'tackle',
-                    team 
-                }
 
-                break;
-            case 'sack':
-                player = await openPicker();
-                play = {
-                    ...player,
-                    type: 'sack',
-                    team 
-                }
-
-                break;
         }
+
+        play = {
+            ...player,
+            type,
+            team
+        }
+
         if (player) {
             socket.emit('play', play)
         }
+
+        enteringGuestPlay = false;
+        enteringHomePlay = false;
     }
 
     function selectValue(event: MouseEvent) {
@@ -197,6 +165,41 @@
         state = STATE;
         socket.emit('set_minutes', '08');
         socket.emit('set_seconds', '00');
+    }
+
+    function saveList() {
+        socket.emit('save_roster', TeamList);
+    }
+
+    function deleteTeam(event, team) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const currentIndex = TeamList.indexOf(team);
+        TeamList.splice(currentIndex, 1);
+        updateTeams(TeamList);
+    }
+
+    function deletePlayer(event, player) {
+        event.stopPropagation();
+        event.preventDefault();
+
+        const currentIndex = editingTeam.roster.indexOf(player);
+        editingTeam.roster.splice(currentIndex, 1);
+        updatePlayers(editingTeam);
+    }
+
+    function addTeam() {
+        editingTeam = { teamName: '', playLevel: '', roster: []};
+        TeamList.push(editingTeam);
+        updateTeams(TeamList);
+        playerDialog = true;
+    }
+
+    function addPlayer() {
+        editingPlayer = { name: '', number: null};
+        editingTeam.roster.push(editingPlayer);
+        updatePlayers(editingTeam); updatePlayer = true;
     }
 
     let media: Media[] = [];
@@ -454,9 +457,6 @@
     .invisible {
         display: none;
     }
-    .team {
-        height: 300px;
-    }
     .tol button, .down button {
         font-size: 1rem;
     }
@@ -482,6 +482,77 @@
     .plays {
         padding: 0;
         margin: 0.5rem;
+    }
+
+    .player {
+        display: flex;
+        flex-direction: row;
+        justify-content: flex-start;
+        font-size: 1.5rem;
+        font-weight: 700;
+
+        & input {
+            color: #000;
+            border: 1px solid;
+
+            &.player-number {
+                width: 3rem;
+                flex: 0;
+            }
+
+            &.player-name {
+                margin-left: 1.5rem;
+                display: inline-block;
+                flex: 1;
+            }
+
+            &[disabled] {
+                border: 0;
+                pointer-events: none;
+            }
+        }
+    }
+
+    .team-dialog-title {
+        display: flex;
+        flex-direction: row;
+
+        & input {
+            flex: 1;
+            width: 50%;
+            color: #000;
+        }
+    }
+
+    .team-name {
+        width: 50%;
+    }
+
+    .play-level {
+        width: 12rem;
+    }
+
+    .delete-item {
+        align-self: flex-end;
+        padding-left: 2rem;
+    }
+
+    .timeouts {
+        display: flex;
+        flex-wrap: wrap;
+        width: 100%;
+
+        & span {
+            display: flex;
+            flex: 1;
+            justify-content: space-around;
+
+            & button {
+                width: 50%;
+                padding: 0.25rem;
+                min-width: 2rem;
+            }
+        }
     }
   </style>
   <main>
@@ -565,9 +636,16 @@
             <div class="tol">
                 <div>
                     <h3>Timeouts</h3>
-                    <button class:active={state.hTol === 1} on:click={() => state.hTol = 1}>1</button>
-                    <button class:active={state.hTol === 2} on:click={() => state.hTol = 2}>2</button>
-                    <button class:active={state.hTol === 3} on:click={() => state.hTol = 3}>3</button>
+                    <div class="timeouts">
+                        <span>
+                            <button class:active={state.hTol === 0} on:click={() => state.hTol = 0}><span>0</span></button>
+                            <button class:active={state.hTol === 1} on:click={() => state.hTol = 1}>1</button>
+                        </span>
+                        <span>
+                            <button class:active={state.hTol === 2} on:click={() => state.hTol = 2}>2</button>
+                            <button class:active={state.hTol === 3} on:click={() => state.hTol = 3}>3</button>
+                        </span>
+                    </div>
                 </div>
             </div>
             <button on:click={() => enteringHomePlay = true}>Enter Play</button>
@@ -583,11 +661,19 @@
             <div class="tol">
                 <div>
                     <h3>Timeouts</h3>
-                    <button class:active={state.gTol === 1} on:click={() => state.gTol = 1}>1</button>
-                    <button class:active={state.gTol === 2} on:click={() => state.gTol = 2}>2</button>
-                    <button class:active={state.gTol === 3} on:click={() => state.gTol = 3}>3</button>
+                    <div class="timeouts">
+                        <span>
+                            <button class:active={state.gTol === 0} on:click={() => state.gTol = 0}>0</button>
+                            <button class:active={state.gTol === 1} on:click={() => state.gTol = 1}>1</button>
+                        </span>
+                        <span>
+                            <button class:active={state.gTol === 2} on:click={() => state.gTol = 2}>2</button>
+                            <button class:active={state.gTol === 3} on:click={() => state.gTol = 3}>3</button>
+                        </span>
+                    </div>
                 </div>
             </div>
+            <button on:click={() => enteringGuestPlay = true}>Enter Play</button>
         </div>
     </div>
   </main>
@@ -622,34 +708,34 @@
 <Dialog bind:open={enteringGuestPlay}>
     <div class="guest team">
         {#if state.posession === 'guest'}
-            <button on:click={() => createPlay('touchdown', 'guest')}>Touchdown</button>
-            <button on:click={() => createPlay('conversion', 'guest')}>2 Point Conversion</button>
+            <button on:click={() => createPlay('touchdown', 'away')}>Touchdown</button>
+            <button on:click={() => createPlay('conversion', 'away')}>2 Point Conversion</button>
             <div class="offense-plays">
-                <button on:click={() => createPlay('block', 'guest')}>Block</button>
-                <button on:click={() => createPlay('run', 'guest')}>Run</button>
-                <button on:click={() => createPlay('fumble', 'guest')}>Fumble Recovery</button>
-                <button on:click={() => createPlay('catch', 'guest')}>Catch</button>
+                <button on:click={() => createPlay('block', 'away')}>Block</button>
+                <button on:click={() => createPlay('run', 'away')}>Run</button>
+                <button on:click={() => createPlay('fumble', 'away')}>Fumble Recovery</button>
+                <button on:click={() => createPlay('catch', 'away')}>Catch</button>
                 <button on:click={() => createPlay('pass', 'home')}>Pass</button>
             </div>
         {:else}
             <div class="defense-plays">
                 <button on:click={() => state.posession = "guest"}>Take Possesion</button>
-                <button on:click={() => createPlay('safety', 'guest')}>Safety</button>
-                <button on:click={() => createPlay('tackle', 'guest')}>Tackle</button>
-                <button on:click={() => createPlay('sack', 'guest')}>Sack</button>
-                <button on:click={() => createPlay('fumble', 'guest')}>Fumble Recovery</button>
-                <button on:click={() => createPlay('interception', 'guest')}>Interception</button>
+                <button on:click={() => createPlay('safety', 'away')}>Safety</button>
+                <button on:click={() => createPlay('tackle', 'away')}>Tackle</button>
+                <button on:click={() => createPlay('sack', 'away')}>Sack</button>
+                <button on:click={() => createPlay('fumble', 'away')}>Fumble Recovery</button>
+                <button on:click={() => createPlay('interception', 'away')}>Interception</button>
             </div>
         {/if}
     </div>
 </Dialog>
 
 <Dialog bind:open={settingsOpen}>
-    <label for="select-team">Select Team
-        <select id="team-select" bind:value={state.team}>
-            <option value='mites'>Mites</option>
-            <option value='peewee'>Pee Wee</option>
-            <option value='middleSchool'>Middle School</option>
+    <label for="select-team">Select Home Team
+        <select id="team-select" bind:value={state.homeTeam}>
+            {#each TeamList as team}
+                <option value={team}>{team.teamName} - {team.playLevel}</option>
+            {/each}
         </select>
     </label>
 
@@ -671,11 +757,14 @@
         </div>
     {/if}
 
-    <label for="color">Text Color
-    <input bind:this={colorPicker} type="color" id="color" on:change={updateColor}/></label>
+    <fieldset>
+        <legend>Adjust Scoreboard Colors</legend>
+        <label for="color">Text Color
+        <input bind:this={colorPicker} type="color" id="color" on:change={updateColor}/></label>
 
-    <label for="backgroundColor">Background Color
-    <input bind:this={backgroundColorPicker} type="color" id="backgroundColor" on:change={updateBackgroundColor}/></label>
+        <label for="backgroundColor">Background Color
+        <input bind:this={backgroundColorPicker} type="color" id="backgroundColor" on:change={updateBackgroundColor}/></label>
+    </fieldset>
 </Dialog>
 
 <Dialog bind:open={menuOpen}>
@@ -694,8 +783,40 @@
         
         <button on:click={() => {mediaOpen = true; menuOpen=false;}}>🎶 Play Media</button>
         <button on:click={() => {settingsOpen = true; menuOpen = false}}>⚙️ Settings</button>
+        <button on:click={() => {connectDialog = true; menuOpen=false;}}>Connect Remote</button>
+        <button on:click={() => {updateRosterDialog = true; menuOpen=false;}}>Update Roster</button>
         <button on:click={() => newGame()}>🆕 Start New Game</button>
     </div>
+</Dialog>
+
+<Dialog bind:open={updateRosterDialog}>
+    <h2>Select a team to update</h2>
+    <ButtonList buttons={teamButtons}>
+        <div slot="content" let:button={team} class="player">
+            <span><span class="team-name">{team.data.teamName}</span> - <span class="play-level">{team.data.playLevel}</span></span><span class="delete-item" on:click={(event) => deleteTeam(event, team.data)}>🗑️</span>
+        </div>
+    </ButtonList>
+    <button on:click={addTeam}>Add New Team</button>
+    <button on:click={saveList}>Save</button>
+</Dialog>
+
+<Dialog bind:open={playerDialog} close={() => {updatePlayer = false; editingPlayer = null}}>
+    {#if editingTeam}
+        <h2 class="team-dialog-title"><input class="team-name" type="text" bind:value="{editingTeam.teamName}" placeholder="Team Name"/> - <input type="text" bind:value={editingTeam.playLevel} placeholder="Play Level"/></h2>
+    {/if}
+    <h2>Select a player to update</h2>
+    <ButtonList buttons={playerButtons}>
+        <div slot="content" let:button={player} class="player">
+            {#if updatePlayer && editingPlayer === player.data}
+                #<input class="player-number" type="text" bind:value="{editingPlayer.number}" placeholder="#"/> - <input class="player-name" type="text" bind:value={editingPlayer.name} placeholder="Enter Player Name"/><span>🗑️</span>
+            {:else}
+                 #<input class="player-number" type="text" value="{player.data.number}" placeholder="#" disabled/> - <input class="player-name" type="text" value={player.data.name} placeholder="Enter Player Name" disabled/>
+<span class="edit-icon">✏️</span><span class="delete-item" on:click={(event) => deletePlayer(event, player.data)}>🗑️</span>
+            {/if}
+        </div>
+    </ButtonList>
+    <button on:click={addPlayer}>Add New Player</button>
+    <button on:click={saveList}>Save</button>
 </Dialog>
 
 <Dialog bind:open={mediaOpen}>
@@ -723,10 +844,10 @@
 
 <Dialog bind:open={playerPicker}>
     <ul>
+        <li><button class="player" on:click={() => closePicker(null)}>Unknown</button></li>
         {#each currentTeam || [] as _player}
             <li><button class="player" on:click={() => closePicker(_player)}>#{_player.number} {_player.name}</button></li>
         {/each}
-        <li><button class="player" on:click={() => closePicker(null)}>Unknown</button></li>
     </ul>
     <button on:click={() => { playerPicker = false; playerResolver(null); } }>Cancel</button>
 </Dialog>

@@ -1,5 +1,6 @@
 <script lang="ts">
     export let open = false;
+    export let close = () => {};
 </script>
 
 <style>
@@ -51,6 +52,6 @@
     <div class="dialog-content">
         <slot/>
 
-        <button class="close-button" on:click={() => open = false}>Close</button>
+        <button class="close-button" on:click={() => { open = false; close?.(); }}>Close</button>
     </div>
 </div>

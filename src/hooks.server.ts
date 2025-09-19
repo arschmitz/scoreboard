@@ -1,6 +1,7 @@
 import type { State, Time } from '$lib/types';
 import path from 'path';
-import gpio from 'rpi-gpio';
+import { writeFile } from 'node:fs/promises';
+// import gpio from 'rpi-gpio';
 import { MEDIA_PATH } from '$env/static/private';
 import { port } from '$lib/env';
 import { Server } from 'socket.io';
@@ -8,34 +9,36 @@ import { readdirSync, readFileSync } from 'fs';
 import { setupClock, bindClock } from '$lib/clock';
 import { STATE } from '$lib/constants';
 import os from 'node:os';
-let ip = os.networkInterfaces().wlan0[0].address;
+import { fileURLToPath } from 'url';
 
-console.log({ ip })
-console.log(MEDIA_PATH);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
+console.log()
+
+let ip = os.networkInterfaces()?.wlan0?.[0]?.address;
 let state: State = JSON.parse(JSON.stringify(STATE));
 
 state.ip = ip;
 
-gpio.setup(7, gpio.DIR_OUT);
-gpio.setup(11, gpio.DIR_OUT);
-gpio.setup(13, gpio.DIR_OUT);
-gpio.setup(15, gpio.DIR_OUT);
+// gpio.setup(7, gpio.DIR_OUT);
+// gpio.setup(11, gpio.DIR_OUT);
+// gpio.setup(13, gpio.DIR_OUT);
+// gpio.setup(15, gpio.DIR_OUT);
 
-const PINS = {
-    SMOKE_ON: 7,
-    SOMKE_OFF: 11,
-    ROCKET: 15,
-    AIR_CANNON: 13,
-}
+// const PINS = {
+//     SMOKE_ON: 7,
+//     SOMKE_OFF: 11,
+//     ROCKET: 15,
+//     AIR_CANNON: 13,
+// }
 
-function firePin(action, time) {
-    gpio.write(PINS[action], true);
+// function firePin(action, time) {
+//     gpio.write(PINS[action], true);
 
-    setTimeout(() => {
-        gpio.write(PINS[action], false);
-    }, time);
-}
+//     setTimeout(() => {
+//         gpio.write(PINS[action], false);
+//     }, time);
+// }
 
 try {
     const io = new Server({
@@ -53,9 +56,9 @@ try {
         socket.on('sync', (_state: State) => {
             console.log('sync');
 
-            if (state.smoke !== _state.smoke) {
-                firePin(_state.smoke ? 'SMOKE_ON' : 'SOMKE_OFF', 5000);
-            }
+            // if (state.smoke !== _state.smoke) {
+            //     firePin(_state.smoke ? 'SMOKE_ON' : 'SOMKE_OFF', 5000);
+            // }
 
             state = _state;
 
@@ -78,6 +81,10 @@ try {
         });
         socket.on('backgroundColor', (color) => {
             io.emit('backgroundColor', color)
+        });
+        socket.on('save_roster', async (roster) => {
+            console.log(__dirname)
+            await writeFile(path.join(__dirname, 'lib', 'teams.json'), JSON.stringify(roster, null, 2))
         });
 
         setInterval(() => {

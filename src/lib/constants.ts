@@ -12,7 +12,8 @@ export const STATE: State = {
     hTol: 3,
     gTol: 3,
     smoke: false,
-    team: 'mites',
+    homeTeam: null,
+    awayTeam: null,
     ip: null,
     trackFieldPosition: true,
     trackDowns: true

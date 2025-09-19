@@ -10,7 +10,8 @@ export interface State {
     gTol: number;
     guestName: string;
     smoke: boolean;
-    team: 'mites' | 'peewee' | 'middleSchool';
+    homeTeam: Team;
+    awayTeam: Team;
     ip: string;
     trackDowns: boolean;
     trackFieldPosition: boolean;
@@ -48,4 +49,13 @@ export interface Media {
     artist: string;
     file: string;
     song: string;
+}
+
+export interface Team {
+    teamName: string;
+    playLevel: string;
+    roster: {
+        name: string;
+        number: string;
+    }[];
 }
