@@ -16,20 +16,12 @@ async function startBrowser() {
   console.log("Starting Server")
   const { promise, resolve, reject } = Promise.withResolvers();
 
-  const ls = spawn(chromeInfo.executablePath, ['--kiosk', '--new-window', '--start-maximized', '--app=http://scoreboard.local:4173']);
+  const ls = spawn(chromeInfo.executablePath, ['--kiosk', '--new-window', '--user-data-dir=/home/scoreboard/display', '--start-maximized', '--app=http://output.jsbin.com/sisesoq']);
   console.log("Spawned process")
 
 
   ls.stdout.on('data', (data) => {
-    try {
-      console.log(data.toString())
-      if (/Network/.test(data.toString())) {
-        resolve();
-      }
-    } catch (error) {
-      console.log("resolve bad")
-      console.log(error)
-    }
+    console.log(data.toString())
   });
 
   ls.stderr.on('data', (data) => {
@@ -39,13 +31,6 @@ async function startBrowser() {
   ls.on('close', (code) => {
     console.log(`child process exited with code ${code}`);
   });
-
-  try {
-    await promise;
-    console.log("Server Running");
-  } catch {
-    console.log("all bad")
-  }
 
   return ls;
 }
@@ -59,9 +44,12 @@ async function startSpotify() {
 }
 
 async function start() {
-  await startSpotify();
-  await waitOn({ resources: ['http://scoreboard.local:4173'] });
   await startBrowser();
+  // await startSpotify();
+
+  await waitOn({ resources: ['http://scoreboard.local:4173'] });
+  console.log("Host available")
+  const ls = spawn(chromeInfo.executablePath, ['--same-tab','--kiosk',, '--user-data-dir=/home/scoreboard/display', '--app=http://scoreboard.local:4173']);
   console.log("running open chrome")
 }
 
