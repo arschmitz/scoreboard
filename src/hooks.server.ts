@@ -2,7 +2,6 @@ import type { State, Time } from '$lib/types';
 import path from 'path';
 import { writeFile } from 'node:fs/promises';
 // import gpio from 'rpi-gpio';
-import { MEDIA_PATH } from '$env/static/private';
 import { port } from '$lib/env';
 import { Server } from 'socket.io';
 import { readdirSync, readFileSync } from 'fs';
@@ -12,8 +11,6 @@ import os from 'node:os';
 import { fileURLToPath } from 'url';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-
-console.log()
 
 let ip = os.networkInterfaces()?.wlan0?.[0]?.address;
 let state: State = JSON.parse(JSON.stringify(STATE));
@@ -70,12 +67,12 @@ try {
         socket.on('video', (video) => {
             io.emit('video', video)
         });
-        socket.on('rocket', () => {
-            firePin('ROCKET', 500);
-        });
-        socket.on('air_cannon', () => {
-            firePin('AIR_CANNON', 100);
-        });
+        // socket.on('rocket', () => {
+        //     firePin('ROCKET', 500);
+        // });
+        // socket.on('air_cannon', () => {
+        //     firePin('AIR_CANNON', 100);
+        // });
         socket.on('color', (color) => {
             io.emit('color', color)
         });
@@ -102,40 +99,40 @@ try {
     console.error(error);
 }
 
-function getMediaList() {
-    let files = readdirSync(path.join(MEDIA_PATH, 'scoreboard-media'));
+// function getMediaList() {
+//     let files = readdirSync(path.join(MEDIA_PATH, 'scoreboard-media'));
 
-    files = files
-        .filter((item) => !/^\._/.test(item))
-        .map((file) => {
-            const [artist, song] = file.split('.')[0].split('-');
-            return {
-                artist,
-                file,
-                song
-            }
-        });
+//     files = files
+//         .filter((item) => !/^\._/.test(item))
+//         .map((file) => {
+//             const [artist, song] = file.split('.')[0].split('-');
+//             return {
+//                 artist,
+//                 file,
+//                 song
+//             }
+//         });
 
-    return new Response(JSON.stringify(files));
-}
+//     return new Response(JSON.stringify(files));
+// }
 
-function getMedia(event) {
-    const file = decodeURIComponent(event.url.pathname.split('/')[2]);
-    const filePath = path.join(MEDIA_PATH, 'scoreboard-media', file);
+// function getMedia(event) {
+//     const file = decodeURIComponent(event.url.pathname.split('/')[2]);
+//     const filePath = path.join(MEDIA_PATH, 'scoreboard-media', file);
 
-    const options = { "Content-Type": "application/octet-stream", status: 200 };
-    const fileContents = readFileSync(filePath);
-    return new Response(fileContents, options);
-}
+//     const options = { "Content-Type": "application/octet-stream", status: 200 };
+//     const fileContents = readFileSync(filePath);
+//     return new Response(fileContents, options);
+// }
 
-export async function handle({ event, resolve }) {
-    if (event.url.pathname.startsWith('/media/list')) {
-        return getMediaList();
-    }
+// export async function handle({ event, resolve }) {
+//     if (event.url.pathname.startsWith('/media/list')) {
+//         return getMediaList();
+//     }
 
-    if (event.url.pathname.startsWith('/media')) {
-        return getMedia(event);
-    }
-   
-    return await resolve(event);
-}
+//     if (event.url.pathname.startsWith('/media')) {
+//         return getMedia(event);
+//     }
+
+//     return await resolve(event);
+// }

@@ -12,10 +12,8 @@
     import TeamList from '$lib/teams.json';
     import { STATE, TIME } from '$lib/constants';
     import ButtonList from '$lib/buttonList.svelte';
-    import { writable } from 'svelte/store';
 
     export let connectDialog = false;
-    export let local = false;
 
     let time: Time = JSON.parse(JSON.stringify(TIME));;
     let motivation: string;
