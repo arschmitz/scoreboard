@@ -90,7 +90,7 @@ async function startBrowser() {
 
 async function startSpotify() {
   try {
-    await exec('~/spotifyd --no-daemon &');
+    await exec('~/spotifyd --no-daemon');
   } catch {
     console.log("Failed ot start spotify");
   }
