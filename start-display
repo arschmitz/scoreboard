@@ -1,0 +1,6 @@
+#!/bin/bash
+
+. ~/.profile
+. ~/.bashrc
+cd ~/scoreboard;
+/usr/bin/node ~/scoreboard/src/lib/start-display.mjs
