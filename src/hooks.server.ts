@@ -57,6 +57,10 @@ try {
             //     firePin(_state.smoke ? 'SMOKE_ON' : 'SOMKE_OFF', 5000);
             // }
 
+            if (JSON.stringify(_state) === JSON.stringify(state)) {
+                return;
+            }
+
             state = _state;
 
             io.emit('sync', _state);
