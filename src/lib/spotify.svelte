@@ -159,7 +159,7 @@
     player.addListener("player_state_changed", (_state: any) => {
       if (!_state) return;
       state.paused = _state.paused;
-      state.currentTrack = state.track_window.current_track;
+      state.currentTrack = _state.track_window.current_track;
 
       socket.emit("sync", state);
     });
@@ -365,7 +365,7 @@
       <ul>
         {#each state.tracks as track}
           <li
-            class:selected={currentTrack?.id === track.id}
+            class:selected={state.currentTrack?.id === track.id}
             on:click={() => playTrack(track.uri)}
           >
             <img
