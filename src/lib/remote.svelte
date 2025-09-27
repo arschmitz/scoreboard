@@ -218,10 +218,12 @@
     onMount(async () => {
         socket = io(`${window.location.hostname}:${port}`);
 
-        socket.on('sync', (_state) => {
+        socket.on('sync', async (_state) => {
             if (!_state || JSON.stringify(_state) === JSON.stringify(state)) {
                 return;
             }
+
+            await new Promise((resolve) => setTimeout(resolve, 300))
 
             state = _state;
         });
