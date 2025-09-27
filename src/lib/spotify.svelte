@@ -7,7 +7,7 @@
 
   // --- CONFIG ---
   const CLIENT_ID = "5ee38f1a433e43f7b9edde387d58279d";
-  const REDIRECT_URI = "http://127.0.0.1:4173/local-remote";
+  const REDIRECT_URI = "https://127.0.0.1:4173/local-remote";
   const SCOPES = [
     "streaming",
     "user-read-email",

@@ -42,7 +42,6 @@ try {
         cors: {
             origin: "*",
             methods: ["GET", "POST"],
-            credentials: true,
         }
     });
 
