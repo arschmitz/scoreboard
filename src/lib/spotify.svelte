@@ -245,6 +245,43 @@
     started = true;
   }
 
+  async function ensureActivePlaylist() {
+  if (!deviceId) return;
+
+  const token = await getAccessToken();
+
+  // Check if player has context
+  const state = await player.getCurrentState();
+  const contextUri = state?.context?.uri;
+
+  // If context is missing or wrong, set it
+  if (contextUri !== PLAYLIST_URI) {
+    await fetch("https://api.spotify.com/v1/me/player", {
+      method: "PUT",
+      body: JSON.stringify({
+        device_ids: [deviceId],
+        play: false
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`
+      }
+    });
+
+    await fetch(
+      `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
+      {
+        method: "PUT",
+        body: JSON.stringify({ context_uri: PLAYLIST_URI }),
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`
+        }
+      }
+    );
+  }
+}
+
   async function startPlayback() {
     if (!deviceId) return;
     await transferPlayback(deviceId);
@@ -278,6 +315,7 @@
 
       if (local) {
         socket.on("spotify", async ({ name, args } = {}) => {
+          await ensureActivePlaylist();
           args ? player[name](...args) : player[name]();
         });
       }
