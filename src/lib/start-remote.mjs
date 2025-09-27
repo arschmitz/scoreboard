@@ -106,7 +106,7 @@ async function killProcess() {
 
 async function start() {
   await killProcess();
-  await startSpotify();
+  startSpotify();
 
   const webServer = await startServer();
   await startBrowser();
