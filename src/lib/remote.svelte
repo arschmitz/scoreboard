@@ -203,6 +203,16 @@
         updatePlayers(editingTeam); updatePlayer = true;
     }
 
+    function togglePlay() {
+        socket.emit("spotify", { name: "togglePlay" });
+    }
+    function nextTrack() {
+        socket.emit("spotify", { name: "nextTrack" });
+    }
+    function prevTrack() {
+        socket.emit("spotify", { name: "previousTrack" });
+    }
+
     let media: Media[] = [];
 
     onMount(async () => {
@@ -581,6 +591,41 @@
         padding: 1rem !important;
       }
     }
+
+    .mini-player-controls button {
+        background: transparent;
+        border: none;
+        color: #1ed760;
+        font-size: 1.2rem;
+        cursor: pointer;
+        transition: color 0.2s ease;
+    }
+
+    .mini-player-controls button:hover {
+        color: #1db954;
+    }
+
+    .mini-player-controls {
+        position: fixed;
+        width: 100%;
+        bottom: 0;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        background: #1e1e1e;
+        padding: 0 1rem;
+        border-radius: 8px;
+
+        & h5 {
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+        } 
+    }
   </style>
   <main>
     <button class="menu" on:click={() => menuOpen = true }>☰</button>
@@ -703,6 +748,17 @@
             <button on:click={() => enteringGuestPlay = true}>Enter Play</button>
         </div>
     </div>
+    <div class="mini-player-controls">
+        <h5>
+            <span>Spotify Controls</span>
+            <span>
+                <button on:click={prevTrack}>⏮</button>
+                <button on:click={togglePlay}>▶️/⏸</button>
+                <button on:click={nextTrack}>⏭</button>
+            </span>
+        </h5>
+
+    </div>
 </main>
 <div class="spotify-panel">
     <Spotify {local} {socket}/>
@@ -797,8 +853,8 @@
 
 <Dialog bind:open={menuOpen}>
     <div class="menu-wrap">
-    
-        
+
+
         <!--<div>
             <button on:click={() => state.smoke = true}>Smoke On</button>
             <button on:click={() => state.smoke = false}>Smoke Off</button>
