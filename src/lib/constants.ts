@@ -16,7 +16,15 @@ export const STATE: State = {
     awayTeam: null,
     ip: null,
     trackFieldPosition: true,
-    trackDowns: true
+    trackDowns: true,
+    deviceId:  null,
+    paused: true,
+    currentTrack: null,
+    volume: 0.5,
+    tracks: [],
+    accessToken: null,
+    refreshToken: null,
+    expiresAt: 0,
 }
 
 export const TIME: Time = {

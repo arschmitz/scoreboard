@@ -859,5 +859,5 @@
 </Dialog>
 
 <Dialog open={true}>
-    <Spotify {local} {socket}/>
+    <Spotify {local} {socket} {state}/>
 </Dialog>

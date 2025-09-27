@@ -3,6 +3,7 @@
 
   export let socket;
   export let local;
+  export let state;
 
   // --- CONFIG ---
   const CLIENT_ID = "5ee38f1a433e43f7b9edde387d58279d";
@@ -19,21 +20,17 @@
 
   // --- STATE ---
   let player: any;
-  let deviceId: string | null = null;
-  let paused = true;
-  let currentTrack: any = null;
-  let volume = 0.5;
   let ready = false;
   let started = false;
-  let tracks: any[] = [];
   let loadingTracks = false;
 
   // --- AUTH ---
-  let accessToken: string | null = null;
-  let refreshToken: string | null = null;
-  let expiresAt = 0;
+
 
   async function initAuth() {
+    if (!local) {
+      return;
+    }
     const params = new URLSearchParams(window.location.search);
     const code = params.get("code");
 
@@ -42,10 +39,12 @@
       setSession(data);
       history.replaceState({}, "", "/local-remote");
     } else {
-      refreshToken = localStorage.getItem("refresh_token");
-      if (refreshToken) {
-        const data = await refreshAccessToken(refreshToken);
-        setSession(data, refreshToken);
+      if (!state.refresh_token) {
+        state.refreshToken = localStorage.getItem("refresh_token");
+      }
+      if (state.refreshToken) {
+        const data = await refreshAccessToken(state.refreshToken);
+        setSession(data, state.refreshToken);
       } else {
         redirectToSpotifyAuth();
       }
@@ -53,23 +52,23 @@
   }
 
   async function getAccessToken(): Promise<string> {
-    if (!accessToken || Date.now() > expiresAt) {
-      if (refreshToken) {
-        const data = await refreshAccessToken(refreshToken);
-        setSession(data, refreshToken);
+    if (!state.accessToken || Date.now() > state.expiresAt) {
+      if (state.refreshToken) {
+        const data = await refreshAccessToken(state.refreshToken);
+        setSession(data, state.refreshToken);
       } else {
         redirectToSpotifyAuth();
       }
     }
-    return accessToken!;
+    return state.accessToken!;
   }
 
   function setSession(data: any, existingRefresh?: string) {
-    accessToken = data.access_token;
-    refreshToken = data.refresh_token || existingRefresh || null;
-    expiresAt = Date.now() + data.expires_in * 1000;
-    if (refreshToken) {
-      localStorage.setItem("refresh_token", refreshToken);
+    state.accessToken = data.access_token;
+    state.refreshToken = data.refresh_token || existingRefresh || null;
+    state.expiresAt = Date.now() + data.expires_in * 1000;
+    if (state.refreshToken) {
+      localStorage.setItem("refresh_token", state.refreshToken);
     }
   }
 
@@ -146,20 +145,23 @@
       getOAuthToken: async (cb: (token: string) => void) => {
         cb(await getAccessToken());
       },
-      volume,
+      volume: state.volume,
     });
 
     player.addListener("ready", async ({ device_id }: any) => {
-      deviceId = device_id;
+      state.deviceId = device_id;
+      socket.emit("sync", state);
       ready = true;
       console.log("Ready with Device ID", device_id);
       await loadPlaylistTracks();
     });
 
-    player.addListener("player_state_changed", (state: any) => {
-      if (!state) return;
-      paused = state.paused;
-      currentTrack = state.track_window.current_track;
+    player.addListener("player_state_changed", (_state: any) => {
+      if (!_state) return;
+      state.paused = _state.paused;
+      state.currentTrack = state.track_window.current_track;
+
+      socket.emit("sync", state);
     });
 
     player.connect();
@@ -186,7 +188,8 @@
         if (!data.next) break;
         offset += limit;
       }
-      tracks = allTracks;
+      state.tracks = allTracks;
+      socket.emit("sync", state);
     } catch (err) {
       console.error("Error loading playlist tracks", err);
     } finally {
@@ -211,10 +214,10 @@
 
   async function playTrack(trackUri: string) {
     const token = await getAccessToken();
-    if (!deviceId) return;
-    await transferPlayback(deviceId);
+    if (!state.deviceId) return;
+    await transferPlayback(state.deviceId);
     await fetch(
-      `https://api.spotify.com/v1/me/player/play?device_id=${deviceId}`,
+      `https://api.spotify.com/v1/me/player/play?device_id=${state.deviceId}`,
       {
         method: "PUT",
         body: JSON.stringify({ uris: [trackUri] }),
@@ -228,8 +231,8 @@
   }
 
   async function startPlayback() {
-    if (!deviceId) return;
-    await transferPlayback(deviceId);
+    if (!state.deviceId) return;
+    await transferPlayback(state.deviceId);
     started = true;
   }
 
@@ -246,8 +249,8 @@
   }
   function changeVolume(e: Event) {
     const target = e.target as HTMLInputElement;
-    volume = parseFloat(target.value);
-    socket.emit("spotify", { name: "setVolume", args: [volume] });
+    state.volume = parseFloat(target.value);
+    socket.emit("spotify", { name: "setVolume", args: [state.volume] });
   }
 
   // --- MOUNT ---
@@ -324,21 +327,21 @@
     {/if}
   {/if}
 
-  {#if currentTrack}
+  {#if state.currentTrack}
     <img
-      src={currentTrack.album.images[0]?.url}
-      alt={currentTrack.name}
+      src={state.currentTrack.album.images[0]?.url}
+      alt={state.currentTrack.name}
       width="200"
     />
-    <p><strong>{currentTrack.name}</strong></p>
-    <p>{currentTrack.artists.map((a) => a.name).join(", ")}</p>
+    <p><strong>{state.currentTrack.name}</strong></p>
+    <p>{state.currentTrack.artists.map((a) => a.name).join(", ")}</p>
   {/if}
 
   {#if started}
     <div>
       <button on:click={prevTrack}>⏮ Previous</button>
       <button on:click={togglePlay}>
-        {paused ? "▶️ Play" : "⏸ Pause"}
+        {state.paused ? "▶️ Play" : "⏸ Pause"}
       </button>
       <button on:click={nextTrack}>⏭ Next</button>
     </div>
@@ -349,7 +352,7 @@
         min="0"
         max="1"
         step="0.01"
-        bind:value={volume}
+        bind:value={state.volume}
         on:input={changeVolume}
       />
       <p>Volume</p>
@@ -357,10 +360,10 @@
 
     {#if loadingTracks}
       <div class="spinner">Loading playlist… ⏳</div>
-    {:else if tracks.length > 0}
+    {:else if state.tracks.length > 0}
       <h3>Playlist Tracks</h3>
       <ul>
-        {#each tracks as track}
+        {#each state.tracks as track}
           <li
             class:selected={currentTrack?.id === track.id}
             on:click={() => playTrack(track.uri)}

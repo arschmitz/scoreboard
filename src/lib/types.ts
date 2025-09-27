@@ -15,6 +15,14 @@ export interface State {
     ip: string;
     trackDowns: boolean;
     trackFieldPosition: boolean;
+    deviceId:  string,
+    paused: boolean,
+    currentTrack: unknown,
+    volume: number,
+    tracks: unknown[],
+    accessToken: string,
+    refreshToken: string,
+    expiresAt: number,
 }
 
 export interface Time {
