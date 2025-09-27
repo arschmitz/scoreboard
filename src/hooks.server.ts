@@ -83,6 +83,9 @@ try {
             console.log(__dirname)
             await writeFile(path.join(__dirname, 'lib', 'teams.json'), JSON.stringify(roster, null, 2))
         });
+        socket.on("spotify", (command) => {
+            io.emit("spotify", command);
+        });
 
         setInterval(() => {
             io.emit('sync', state);

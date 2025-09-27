@@ -59,3 +59,10 @@ export interface Team {
         number: string;
     }[];
 }
+
+declare global {
+    interface Window {
+      onSpotifyWebPlaybackSDKReady: () => void;
+      Spotify: any;
+    }
+}

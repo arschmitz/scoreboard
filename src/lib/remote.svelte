@@ -3,6 +3,7 @@
     import type { Socket } from 'socket.io';
     import type { DefaultEventsMap } from 'socket.io/dist/typed-events';
     import type { ButtonListItem } from '$lib/buttonList.svelte';
+    import Spotify from './spotify.svelte';
     import Dialog from '$lib/dialog.svelte';
     import io from 'socket.io-client';
     import { home } from '$lib/teams';
@@ -14,6 +15,7 @@
     import ButtonList from '$lib/buttonList.svelte';
 
     export let connectDialog = false;
+    export let local = false;
 
     let time: Time = JSON.parse(JSON.stringify(TIME));;
     let motivation: string;
@@ -855,4 +857,7 @@
     <p>Scan the QR code to connect your phone or tablet as a remote</p>
     <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=http://{state.ip}:4173/remote"/>
 </Dialog>
-  
+
+<Dialog open={true}>
+    <Spotify {local} {socket}/>
+</Dialog>
