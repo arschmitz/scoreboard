@@ -279,6 +279,10 @@
         min-height: 100vh;
     }
 
+    :global(body) {
+        background-color: rgb(2, 2, 50);
+    }
+
     .down, .team {
         display: flex;
         flex-direction: column;
