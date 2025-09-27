@@ -208,7 +208,7 @@
     onMount(async () => {
         socket = io(`${window.location.hostname}:${port}`);
 
-        socket.once('sync', (_state) => {
+        socket.on('sync', (_state) => {
             if (!_state) {
                 return;
             }
