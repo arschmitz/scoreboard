@@ -858,6 +858,6 @@
     <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=http://{state.ip}:4173/remote"/>
 </Dialog>
 
-<Dialog open={true}>
+<!-- <Dialog open={true}>
     <Spotify {local} {socket}/>
-</Dialog>
+</Dialog> -->
