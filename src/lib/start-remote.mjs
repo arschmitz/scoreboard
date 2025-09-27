@@ -54,7 +54,7 @@ async function startBrowser() {
   console.log("Starting Server")
   const { promise, resolve, reject } = Promise.withResolvers();
 
-  const ls = spawn(chromeInfo.executablePath, ['--kiosk', '--new-window', '--start-maximized', '--app=http://localhost:4173/remote']);
+  const ls = spawn(chromeInfo.executablePath, ['--kiosk', '--new-window', '--start-maximized', '--app=http://localhost:4173/local-remote']);
   console.log("Spawned process")
 
 
