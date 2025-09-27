@@ -33,6 +33,7 @@
     let updateRosterDialog = false;
     let playerDialog = false;
     let updatePlayer = false;
+    let spotifyDialogOpen = false;
 
     const teams: Record<'home' | 'guest', Teams> = Object.freeze({
         home,
@@ -262,10 +263,6 @@
     .clock {
         width: 100%;
     }
-    
-    :global(.clock .clock) {
-        font-size: 4rem;
-    }
 
     select {
         width: 100%;
@@ -308,7 +305,6 @@
         background: none;
         border: none;
         color: white;
-        font-size: 1rem;
         margin: 0;
         padding: 0;
         width: 7rem;
@@ -356,7 +352,6 @@
 
     .timer-button {
         width: 47%;
-        font-size: 1.5rem;
         padding: 1rem;
     }
 
@@ -374,7 +369,6 @@
     }
 
     .display-clock {
-        font-size: 60px;
         color: white;
         display: flex;
         justify-content: space-around;
@@ -446,10 +440,7 @@
         align-items: center;
         margin: 0.5rem 0;
     }
-    .tol input {
-        width: 1em;
-        margin-left: 0.5rem;
-    }
+
     .menu-wrap button {
         width: 100%;
         padding: 0.5rem;
@@ -553,6 +544,38 @@
                 min-width: 2rem;
             }
         }
+    }
+
+    .spotify-panel {
+        display: none;
+    }
+
+    @media screen and (min-width: 768px) {
+      main {
+        display: inline-flex;
+        max-width: calc(100vw - 400px);
+        vertical-align: top;
+        font-size: 1.5rem;
+      }
+
+      .spotify-panel {
+        display: inline-block;
+        width: 395px;
+        vertical-align: top;
+      }
+      input, select, button {
+        font-size: 2rem;
+      }
+      .display-clock input, .display-clock{
+        font-size: 120px;
+      }
+      .score {
+        font-size: 3rem;
+      }
+      .tol button, .down button {
+        font-size: 2rem;
+        padding: 1rem !important;
+      }
     }
   </style>
   <main>
@@ -676,8 +699,9 @@
             <button on:click={() => enteringGuestPlay = true}>Enter Play</button>
         </div>
     </div>
-  </main>
-  <div>
+</main>
+<div class="spotify-panel">
+    <Spotify {local} {socket}/>
 </div>
 
 <Dialog bind:open={enteringHomePlay}>
@@ -780,7 +804,7 @@
             <button on:click={() => socket.emit('rocket', true)}>Launch Rocket</button>
         </div>-->
 
-        
+        <button on:click={() => {spotifyDialogOpen = true; menuOpen=false;}}>🎶 Spotify</button>
         <button on:click={() => {mediaOpen = true; menuOpen=false;}}>🎶 Play Media</button>
         <button on:click={() => {settingsOpen = true; menuOpen = false}}>⚙️ Settings</button>
         <button on:click={() => {connectDialog = true; menuOpen=false;}}>Connect Remote</button>
@@ -858,6 +882,6 @@
     <img src="https://api.qrserver.com/v1/create-qr-code/?size=250x250&data=http://{state.ip}:4173/remote"/>
 </Dialog>
 
-<!-- <Dialog open={true}>
+<!-- <Dialog open={spotifyDialogOpen}>
     <Spotify {local} {socket}/>
-</Dialog> -->
+</Dialog>-->
