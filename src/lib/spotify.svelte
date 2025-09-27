@@ -29,6 +29,7 @@
 
   async function initAuth() {
     if (!local) {
+      started = true;
       return;
     }
     const params = new URLSearchParams(window.location.search);
